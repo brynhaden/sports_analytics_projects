@@ -1,0 +1,56 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# File paths
+files = {
+    "match_1": "/work/UNCWSoccer/5b88b252-b153-4f36-8da3-c5980ef3cb33_whole_match.csv",
+    "match_2": "/work/UNCWSoccer/c99a4ca5-746e-49c3-bede-fb8e861b0877_whole_match.csv",
+    "match_3": "/work/UNCWSoccer/64ccacfa-b2f8-46cb-b9c4-3fe2b64040b9_whole_match.csv",
+    "match_4": "/work/UNCWSoccer/1e1e833f-6f2c-4370-b0b3-95d3e67ccfbf_whole_match.csv",
+}
+
+def load_match(path, match_id):
+    df = pd.read_csv(path, on_bad_lines="skip")
+    df["match_id"] = match_id
+    return df
+
+# Individual match DataFrames
+df_match_uncw = load_match(files["match_1"], "match_1")
+df_match_ten = load_match(files["match_2"], "match_2")
+df_match_uva = load_match(files["match_3"], "match_3")
+df_match_jmu = load_match(files["match_4"], "match_4")
+
+df_all_matches = pd.concat(
+    [df_match_uncw, df_match_ten, df_match_uva, df_match_jmu],
+    ignore_index=True
+)
+
+sns.set_style("whitegrid")
+
+df = df_all_matches
+
+# Minutes
+df["Minutes"] = df["Distance (m)"] / df["Meters / Minutes"]
+df = df[df["Minutes"] > 0]
+df["Minutes"] = df["Minutes"].clip(upper=95)
+
+# Role
+df["Role"] = np.where(df["Minutes"] >= 60, "Starter", "Sub")
+
+# Starters only
+df_starters = df[df["Role"] == "Starter"]
+
+# Figure 1 -Total Distance (Starters)
+plt.figure(figsize=(7,5))
+sns.boxplot(
+    data=df_starters,
+    y="Distance (m)",
+    color="#7BAFD4"
+)
+plt.title("Total Match Distance (Starters Only)")
+plt.ylabel("Distance (m)")
+plt.xlabel("")
+plt.tight_layout()
+plt.show()
