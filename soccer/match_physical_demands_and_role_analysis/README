@@ -1,1 +1,30 @@
+# Section 1 – Match Physical Demands & Role Analysis
 
+## Objective
+Understand **the physical demands of a UNC Women’s Soccer match** and how **playing time and role (starter vs sub) influence output**.
+
+---
+
+## Visualizations
+- **Total Distance by Player/Role:** Boxplots, violin plots  
+- **High-Intensity Distance per Minute:** Scatterplots  
+- **Sprints, Accelerations, Decelerations per Minute:** Bar charts  
+- **Minutes Played Distribution:** Histogram  
+
+---
+
+## Key Insights to Communicate
+- Who covers the most distance / high-intensity distance?  
+- How do starters vs substitutes compare?  
+- Are there outliers (high or low performers)?  
+- How do physical outputs scale with playing time?
+
+---
+
+## Interactive Dashboard
+[View Dashboard in Deepnote](https://deepnote.com/project/YOUR_PROJECT_ID)
+
+---
+
+## Code
+All scripts and notebooks are stored in `code/` folder. Figures are stored in `figures/`.
