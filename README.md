@@ -36,6 +36,4 @@ Welcome! This portfolio showcases my sports analytics projects across **soccer, 
 
 ---
 
-## Repository Structure
-
 
