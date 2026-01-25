@@ -1,3 +1,6 @@
+# -----------------------------
+# Data Cleaning and Preparation
+# -----------------------------
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -42,7 +45,11 @@ df["Role"] = np.where(df["Minutes"] >= 60, "Starter", "Sub")
 # Starters only
 df_starters = df[df["Role"] == "Starter"]
 
-## FIGURE 1 — Total Distance (Starters)
+# -----------------------------------------------------
+# SECTION 1: Match Physical Demands and Role-Based Load
+# -----------------------------------------------------
+
+## FIGURE 1: Total Distance (Starters)
 ## Question: What distance does a full match require?
 # Figure 1 -Total Distance (Starters)
 plt.figure(figsize=(7,5))
@@ -51,7 +58,6 @@ sns.boxplot(
     y="Distance (m)",
     color="#7BAFD4"
 )
-
 
 ## Figure 2: Match Intensity (Meters per Minute)
 ## Question: How intense is match play?
@@ -72,7 +78,7 @@ plt.xlabel("")
 plt.tight_layout()
 plt.show()
 
-## FIGURE 3 — High-Speed & Sprint Distance
+## FIGURE 3: High-Speed & Sprint Distance
 ## Question: How much high-speed running is required?
 
 df_starters["HI_Sprint_Dist"] = (
@@ -92,7 +98,7 @@ plt.xlabel("")
 plt.tight_layout()
 plt.show()
 
-## FIGURE 4 — Event Density (Per 90)
+## FIGURE 4: Event Density (Per 90)
 ## Question: How often do intense actions occur?
 
 df_starters["HI_Events_per_90"] = (
@@ -130,7 +136,7 @@ plt.xticks(rotation=30)
 plt.tight_layout()
 plt.show()
 
-## FIGURE 5 — Minutes vs Intensity (Contextual Subs)
+## FIGURE 5: Minutes vs Intensity (Contextual Subs)
 ## Question: Why subs look different.
 
 plt.figure(figsize=(7,5))
@@ -148,7 +154,7 @@ plt.ylabel("Meters per Minute")
 plt.tight_layout()
 plt.show()
 
-## FIGURE 6 — Starter vs Sub Comparison (Context Only)
+## FIGURE 6: Starter vs Sub Comparison (Context Only)
 
 plt.figure(figsize=(7,5))
 sns.boxplot(
@@ -164,17 +170,15 @@ plt.tight_layout()
 plt.show()
 
 
-# -----------------------------
+# ----------------------------------------
 # SECTION 2: Speed Profile & Playing Style
-# -----------------------------
+# ----------------------------------------
 
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# -----------------------------
-# 1. Prepare the data
-# -----------------------------
+## Prepare the data
 
 # Assume df_all_matches is your merged dataset with all 4 matches
 # Convert Distance Profile columns to long format for plotting
@@ -193,9 +197,7 @@ df_speed_long = df_all_matches.melt(
 # Extract numeric speed from column names
 df_speed_long["Speed_Kph"] = df_speed_long["Speed_Kph"].str.extract(r"(\d+)").astype(float)
 
-# -----------------------------
-# 2. Add Position (manual mapping)
-# -----------------------------
+## Add Position (manual mapping)
 # Replace with actual positions you assign after watching matches
 player_positions = {
     "Abby Gundry": "Goalkeeper",          # 1
@@ -222,9 +224,7 @@ player_positions = {
 
 df_speed_long["Position"] = df_speed_long["Athlete"].map(player_positions)
 
-# -----------------------------
-# 3. Position-Based Average Speed Distribution
-# -----------------------------
+## Figure 1: Position-Based Average Speed Distribution
 plt.figure(figsize=(10,6))
 sns.lineplot(
     data=df_speed_long,
@@ -242,9 +242,7 @@ plt.legend(title="Position")
 plt.tight_layout()
 plt.show()
 
-# -----------------------------
-# 4. Individual Player Deep Dive
-# -----------------------------
+## Figure 2: Individual Player Deep Dive
 selected_player = "Ashley Pennie"  # Change to any player
 df_player = df_speed_long[df_speed_long["Athlete"] == selected_player]
 
@@ -262,9 +260,8 @@ plt.ylabel("Distance Covered (m)")
 plt.tight_layout()
 plt.show()
 
-# -----------------------------
-# 5. Player vs Position Comparison
-# -----------------------------
+## Figure 3: Player vs Position Comparison
+
 # Compute position averages
 df_position_avg = df_speed_long.groupby(["Position","Speed_Kph"]).Distance_m.mean().reset_index()
 player_position = player_positions[selected_player]
@@ -295,9 +292,12 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-
-## SECTION 3: Load & Injury Risk
+# -----------------------------
+# SECTION 3: Load & Injury Risk
+# -----------------------------
 ## Which players might be at risk of fatigue or injury, and how does load vary over time and by player?
+
+## Prepare the data
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -354,7 +354,12 @@ plt.legend(bbox_to_anchor=(1.05,1), loc='upper left')
 plt.tight_layout()
 plt.show()
 
-## Section 4: Pro Player vs Team Average
+# -------------------------------------
+# Section 4: Pro Player vs Team Average
+# -------------------------------------
+
+## Data Preparation
+
 # Flag pro player(s)
 df_all_matches['Pro_Status'] = df_all_matches['Athlete'].apply(lambda x: 'Pro' if x == 'Evelyn Shores' else 'Team Average')
 
