@@ -1,39 +1,43 @@
 # Sports Analytics Portfolio
 
-Welcome! This portfolio showcases my sports analytics projects across **soccer, basketball, and baseball**. It highlights my skills in **Python, R, SAS**, and creating **interactive dashboards**.
+This repository contains a collection of sports analytics projects focused on performance analysis, tactical insights, workload monitoring, and data-driven decision-making in team sports.
 
----
+## Purpose
 
-## Portfolio Sections
+The goal of this portfolio is to demonstrate:
+- Applied data analysis in real sports contexts
+- Technical skills in Python, R, and data visualization
+- Ability to translate data into insights for coaches, performance staff, and front offices
+- Structured, reproducible analytical workflows
 
-### 1. Match Physical Demands & Role Analysis
-- **Focus:** Understanding the physical demands of UNC Women’s Soccer matches and how playing time impacts players.
-- **Visualizations:** Boxplots, violin plots, scatter plots for distance, sprinting, accelerations, decelerations.
-- **Interactive Dashboard:** [View Section 1 Dashboard](https://deepnote.com/project/YOUR_PROJECT_ID)
+## Sports Covered
 
-### 2. Speed Profile & Playing Style Analysis
-- **Focus:** Player speed distributions, speed zones, and movement patterns to identify playing style clusters.
-- **Visualizations:** Histograms, cumulative distance curves, clustering plots.
-- **Interactive Dashboard:** [View Section 2 Dashboard](https://deepnote.com/project/YOUR_PROJECT_ID)
+- Soccer (NCAA & professional data)
+- Basketball
+- Baseball
+- Football
+- Athletic department & financial analytics
 
-### 3. Training Load & Injury Risk Signals
-- **Focus:** Acute:chronic workload ratio, acceleration/deceleration loads, and identifying potential injury risk.
-- **Visualizations:** Time-series plots, rolling averages, load scatter plots.
-- **Interactive Dashboard:** [View Section 3 Dashboard](https://deepnote.com/project/YOUR_PROJECT_ID)
+## Tools & Methods
 
-### 4. Pro vs. Team / Position Comparison
-- **Focus:** Compare pro-level athlete(s) to team averages and positional norms.
-- **Visualizations:** Radar charts, bar plots, per-minute comparison metrics.
-- **Interactive Dashboard:** [View Section 4 Dashboard](https://deepnote.com/project/YOUR_PROJECT_ID)
+- Python (pandas, numpy, matplotlib, seaborn, scikit-learn)
+- R (tidyverse, ggplot2)
+- Data visualization & dashboards (Deepnote, GitHub Pages)
+- Statistical modeling & clustering
+- Sports science metrics (load, intensity, variability)
 
----
+## Project Structure
 
-## Skills Demonstrated
-- **Python:** pandas, matplotlib, seaborn, scikit-learn, statsmodels
-- **R:** dplyr, ggplot2, tidyr
-- **SAS:** Statistical modeling and reporting
-- **Dashboarding:** Deepnote interactive apps, GitHub integration
+Each sport contains multiple projects. Each project includes:
+- Clear research question
+- Data sources
+- Analytical methods
+- Visualizations
+- Interpretations & implications
 
----
+## Key Focus
 
-
+This portfolio emphasizes not just technical execution, but also:
+- Why the analysis matters
+- Who it is useful for
+- What decisions it can inform
