@@ -294,3 +294,149 @@ plt.ylabel("Distance Covered (m)")
 plt.legend()
 plt.tight_layout()
 plt.show()
+
+
+## SECTION 3: Load & Injury Risk
+## Which players might be at risk of fatigue or injury, and how does load vary over time and by player?
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Only include rows where Minutes > 0
+df_all_matches = df_all_matches[df_all_matches["Minutes"] > 0]
+
+# Normalized metrics
+df_all_matches["Dist_per_Min"] = df_all_matches["Distance (m)"] / df_all_matches["Minutes"]
+df_all_matches["HI_Dist_per_Min"] = df_all_matches["High intensity Running Distance (m) (Speed Zone 5)"] / df_all_matches["Minutes"]
+df_all_matches["Sprint_Dist_per_Min"] = df_all_matches["Sprint Distance (m) (Speed Zone 6)"] / df_all_matches["Minutes"]
+df_all_matches["Acc_per_Min"] = df_all_matches["Acceleration Events"] / df_all_matches["Minutes"]
+df_all_matches["Dec_per_Min"] = df_all_matches["Deceleration Events"] / df_all_matches["Minutes"]
+
+# Add match index for each player
+df_all_matches['Match_Num'] = df_all_matches.groupby('Athlete').cumcount() + 1
+
+# Rolling averages per player (Acute = 1 match, Chronic = 3 match rolling)
+df_all_matches['Acute_Dist'] = df_all_matches.groupby('Athlete')['Distance (m)'].rolling(1, min_periods=1).mean().reset_index(0, drop=True)
+df_all_matches['Chronic_Dist'] = df_all_matches.groupby('Athlete')['Distance (m)'].rolling(3, min_periods=1).mean().reset_index(0, drop=True)
+df_all_matches['ACWR_Dist'] = df_all_matches['Acute_Dist'] / df_all_matches['Chronic_Dist']
+
+## Figure 1: Distance per Minute by Match
+plt.figure(figsize=(10,6))
+sns.lineplot(data=df_all_matches, x='Match_Num', y='Dist_per_Min', hue='Athlete', marker='o')
+plt.title("Distance per Minute by Match")
+plt.xlabel("Match Number")
+plt.ylabel("Distance per Minute")
+plt.legend(bbox_to_anchor=(1.05,1), loc='upper left')
+plt.tight_layout()
+plt.show()
+
+## Figure 2: ACWR (Distance) per Player
+plt.figure(figsize=(10,6))
+sns.lineplot(data=df_all_matches, x='Match_Num', y='ACWR_Dist', hue='Athlete', marker='o')
+plt.axhline(1.5, color='red', linestyle='--', label='High Risk')
+plt.axhline(0.8, color='orange', linestyle='--', label='Underload')
+plt.title("ACWR (Distance) per Player")
+plt.xlabel("Match Number")
+plt.ylabel("ACWR (Distance)")
+plt.legend(bbox_to_anchor=(1.05,1), loc='upper left')
+plt.tight_layout()
+plt.show()
+
+## Figure 3: Acceleration & Deceleration Events per Minute
+plt.figure(figsize=(10,6))
+sns.lineplot(data=df_all_matches, x='Match_Num', y='Acc_per_Min', hue='Athlete', marker='o')
+sns.lineplot(data=df_all_matches, x='Match_Num', y='Dec_per_Min', hue='Athlete', marker='x', linestyle='--')
+plt.title("Acceleration & Deceleration Events per Minute")
+plt.xlabel("Match Number")
+plt.ylabel("Events per Minute")
+plt.legend(bbox_to_anchor=(1.05,1), loc='upper left')
+plt.tight_layout()
+plt.show()
+
+## Section 4: Pro Player vs Team Average
+# Flag pro player(s)
+df_all_matches['Pro_Status'] = df_all_matches['Athlete'].apply(lambda x: 'Pro' if x == 'Evelyn Shores' else 'Team Average')
+
+# Calculate per-minute metrics for all players
+df_all_matches["Dist_per_Min"] = df_all_matches["Distance (m)"] / df_all_matches["Minutes"]
+df_all_matches["HI_Dist_per_Min"] = df_all_matches["High intensity Running Distance (m) (Speed Zone 5)"] / df_all_matches["Minutes"]
+df_all_matches["Sprint_Dist_per_Min"] = df_all_matches["Sprint Distance (m) (Speed Zone 6)"] / df_all_matches["Minutes"]
+df_all_matches["Acc_per_Min"] = df_all_matches["Acceleration Events"] / df_all_matches["Minutes"]
+df_all_matches["Dec_per_Min"] = df_all_matches["Deceleration Events"] / df_all_matches["Minutes"]
+
+player_positions = {
+    "Abby Gundry": "Goalkeeper",          # 1
+    "Ashley Pennie": "Midfielder",
+    "Jenny Dearie": "Forward",            # 9
+    "Hannah Johann": "Goalkeeper",        # 1
+    "Linda Ullmark": "Midfielder",        # 10
+    "Aven Alvarez": "Defender",           # 2
+    "Bella Devey": "Midfielder",          # 10
+    "Bella Gaetino": "Midfielder",        # 10
+    "Caitlin Mara": "Defender",           # 4
+    "Eden Bretzer": "Defender",           # 4
+    "Ella Smith": "Forward",              # 9
+    "Marisa Shorrock": "Goalkeeper",      # 1
+    "Olivia Thomas": "Forward",           # 9
+    "Raegan Williams": "Defender",        # 3
+    "Tessa Dellarose": "Midfielder",      # 6
+    "Evelyn Shores": "Midfielder",        # 6
+    "Hope Munson": "Defender",            # 3
+    "Kate Faasse": "Forward",             # 9
+    "Liya Brooks": "Goalkeeper",          # 1
+    "Logan Tongberg": "Forward"           # 9
+}
+
+df_all_matches["Position"] = df_all_matches["Athlete"].map(player_positions)
+
+# Team average by position
+team_pos_avg = df_all_matches[df_all_matches['Athlete'] != 'Evelyn Shores'].groupby(['Match_Num', "Position"]).agg({
+    'Dist_per_Min': 'mean',
+    'HI_Dist_per_Min': 'mean',
+    'Sprint_Dist_per_Min': 'mean',
+    'Acc_per_Min': 'mean',
+    'Dec_per_Min': 'mean'
+}).reset_index()
+
+# Evelyn vs her position
+pro_data = df_all_matches[df_all_matches['Athlete'] == 'Evelyn Shores']
+comparison_df = pro_data.merge(
+    team_pos_avg,
+    left_on=['Match_Num', 'Position'],
+    right_on=['Match_Num', 'Position'],
+    suffixes=('_Pro','_PosAvg')
+)
+
+## Figure 1: Distance per Minute: Pro vs Position Average
+plt.figure(figsize=(8,6))
+plt.plot(comparison_df['Match_Num'], comparison_df['Dist_per_Min_Pro'], marker='o', label='Evelyn Shores (Pro)', color='darkblue')
+plt.plot(comparison_df['Match_Num'], comparison_df['Dist_per_Min_PosAvg'], marker='o', label='Position Average', color='lightblue')
+plt.title("Distance per Minute: Pro vs Position Average")
+plt.xlabel("Match Number")
+plt.ylabel("Distance per Minute")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+## Figure 2: High-Intensity Distance per Minute: Pro vs Position Average
+plt.figure(figsize=(8,6))
+plt.plot(comparison_df['Match_Num'], comparison_df['HI_Dist_per_Min_Pro'], marker='o', label='Evelyn Shores (Pro)', color='darkgreen')
+plt.plot(comparison_df['Match_Num'], comparison_df['HI_Dist_per_Min_PosAvg'], marker='o', label='Position Average', color='lightgreen')
+plt.title("High-Intensity Distance per Minute: Pro vs Position Average")
+plt.xlabel("Match Number")
+plt.ylabel("High-Intensity Distance per Minute")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+## Figure 3: Sprint Distance per Minute: Pro vs Position Average
+plt.figure(figsize=(8,6))
+plt.plot(comparison_df['Match_Num'], comparison_df['Sprint_Dist_per_Min_Pro'], marker='o', label='Evelyn Shores (Pro)', color='darkred')
+plt.plot(comparison_df['Match_Num'], comparison_df['Sprint_Dist_per_Min_PosAvg'], marker='o', label='Position Average', color='salmon')
+plt.title("Sprint Distance per Minute: Pro vs Position Average")
+plt.xlabel("Match Number")
+plt.ylabel("Sprint Distance per Minute")
+plt.legend()
+plt.tight_layout()
+plt.show()
